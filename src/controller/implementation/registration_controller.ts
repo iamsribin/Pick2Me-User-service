@@ -1,5 +1,5 @@
 import { IRegistrationController, ControllerCallback, RegisterResponse, CheckUserResponse, ResendOtpResponse } from '../interfaces/IRegisterController';
-import RegistrationService from '../../services/implementation/registration_service';
+import {RegistrationService} from '../../services/implementation/registration_service';
 import { AuthService } from '../../utilities/auth';
 import { sendOtp } from '../../utilities/otpSending';
 import { JwtPayload } from 'jsonwebtoken';
@@ -11,7 +11,7 @@ interface OtpPayload extends JwtPayload {
   clientId: string;
 }
 
-export default class RegistrationController implements IRegistrationController {
+export class RegistrationController implements IRegistrationController {
   constructor(
     private readonly authService: AuthService,
     private readonly RegistrationService: RegistrationService

@@ -1,8 +1,8 @@
-import LoginService from '../../services/implementation/login_service';
+import {LoginService} from '../../services/implementation/login-service';
 import { handleControllerError } from '../../utilities/handleError';
-import { ILoginController, ControllerCallback, CheckLoginUserResponse, CheckGoogleLoginUserResponse } from '../interfaces/ILoginController';
+import { ILoginController, ControllerCallback, CheckLoginUserResponse, CheckGoogleLoginUserResponse } from '../interfaces/i-login-controller';
 
-export default class LoginController implements ILoginController {
+export class LoginController implements ILoginController {
   constructor(
     private readonly loginService: LoginService
   ) {}

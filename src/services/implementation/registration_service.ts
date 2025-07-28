@@ -1,4 +1,4 @@
-import UserRepository from '../../repositories/implementation/userRepo';
+import UserRepository from '../../repositories/implementation/user-repo';
 import { IRegistrationService } from '../interfaces/IRegistrationService';
 import bcrypt from '../../utilities/bcrypt';
 import { UserData } from "../../dto/registrationServiceDTO";
@@ -60,4 +60,3 @@ export class RegistrationService implements IRegistrationService {
   }
 }
 
-export default RegistrationService;

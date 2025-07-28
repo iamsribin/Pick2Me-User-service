@@ -5,28 +5,29 @@ import "dotenv/config";
 import { connectSQL } from './config/sql-database';
 connectSQL(); 
 
-import registrationControl from './controller/implementation/registration_controller';
-import loginControl from './controller/implementation/login_controller';
-// import UserControl from './controller/implementation/user_controller';
-import adminControl from './controller/implementation/admin_controller';
-import LoginUseCases from "./services/implementation/login_service";
-// import UserService from "./services/implementation/user_service";
-import RegistrationUseCases from "./services/implementation/registration_service";
-import AdminUseCases from "./services/implementation/admin_service";
+import {RegistrationController} from './controller/implementation/registration_controller';
+import {LoginController} from './controller/implementation/login-controller';
+import {AdminController} from './controller/implementation/admin-controller';
+
+import {LoginService} from "./services/implementation/login-service";
+import {RegistrationService} from "./services/implementation/registration_service";
+import {AdminService} from "./services/implementation/admin-service";
 import { AuthService } from "./utilities/auth"
-import UserRepository from "./repositories/implementation/userRepo";
+
+import {UserRepository} from "./repositories/implementation/user-repo";
+import {AdminRepository} from "./repositories/implementation/admin-repo";
+
+const userRepo = new UserRepository();
+const adminRepo = new AdminRepository();
 
 const authService = new AuthService();
-const userRepo = new UserRepository();
-const adminUseCases = new AdminUseCases(userRepo);
-const registrationUseCases = new RegistrationUseCases(userRepo);
-// const userService = new UserService(userRepo);
-const loginUseCases = new LoginUseCases(userRepo, authService);
+const adminService = new AdminService(adminRepo);
+const registrationService = new RegistrationService(userRepo);
+const loginService = new LoginService(userRepo, authService);
 
-const adminController = new adminControl(adminUseCases);
-const registrationController = new registrationControl(authService, registrationUseCases); 
-const loginController = new loginControl(loginUseCases);
-// const userController = new UserControl(userService);
+const adminController = new AdminController(adminService);
+const registrationController = new RegistrationController(authService, registrationService); 
+const loginController = new LoginController(loginService);
 
 const packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/user.proto'), {
   keepCase: true,
@@ -52,7 +53,6 @@ server.addService(userProto.User.service, {
   ResendOtp: registrationController.resendOtp.bind(registrationController),
   CheckGoogleLoginUser: loginController.checkGoogleLoginUser.bind(loginController),
   CheckLoginUser: loginController.checkLoginUser.bind(loginController),
-  // fetchUserProfile: userController.fetchUserProfile.bind(userController),
 
   AdminGetActiveUser: adminController.getActiveUser.bind(adminController),
   AdminGetBlockedUsers: adminController.getBlockedUsers.bind(adminController),

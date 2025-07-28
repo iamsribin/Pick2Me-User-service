@@ -1,4 +1,3 @@
-import { UserInterface } from '../../interface/user.interface';
 
 export interface ServiceResponse {
   message: string;

@@ -1,11 +1,11 @@
-import UserRepository from '../../repositories/implementation/userRepo';
+import {UserRepository} from '../../repositories/implementation/user-repo';
 import { AuthService } from '../../utilities/auth';
-import { ILoginService } from '../interfaces/ILoginService';
+import { ILoginService } from '../interfaces/i-login-service';
 import { IUser } from '../../interface/user.interface';
 import { handleControllerError } from '../../utilities/handleError';
 import { ServiceResponse } from '../../dto/serviceResponse';
 
-export default class LoginService implements ILoginService {
+export class LoginService implements ILoginService {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly authService: AuthService
@@ -40,7 +40,7 @@ export default class LoginService implements ILoginService {
 
   async checkLoginUser(mobile: string): Promise<ServiceResponse> {
     try {
-      const user = await this.userRepo.findUser(mobile);
+      const user = await this.userRepo.findByMobile(mobile);
 
       if (!user) {
         return { message: 'No user found' };
@@ -55,7 +55,7 @@ export default class LoginService implements ILoginService {
 
   async checkGoogleUser(email: string): Promise<ServiceResponse> {
     try {
-      const user = await this.userRepo.findEmail(email);
+      const user = await this.userRepo.findByEmail(email);
 
       if (!user) {
         return { message: 'No user found' };
