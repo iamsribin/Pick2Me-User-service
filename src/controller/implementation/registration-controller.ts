@@ -12,11 +12,12 @@ import {
 import { ControllerCallback } from '../interfaces/i-login-controller';
 import { IRegistrationController } from '../interfaces/i-register-controller';
 import { IRegistrationService } from '../../services/interfaces/i-registration-service';
+import { TYPES } from "../../inversify/types";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class RegistrationController implements IRegistrationController {
-  constructor(
-    private readonly _registrationService: IRegistrationService
-  ) {}
+  constructor(@inject(TYPES.RegistrationService) private readonly _registrationService: IRegistrationService) {}
 
   /**
    * Handles user registration with OTP verification

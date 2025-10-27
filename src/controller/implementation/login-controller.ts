@@ -3,11 +3,12 @@ import { ILoginController, ControllerCallback } from '../interfaces/i-login-cont
 import { LoginResponseDto } from '../../dto/response/login-response.dto';
 import { LoginByMobileRequestDto, LoginByGoogleRequestDto } from '../../dto/request/login-request.dto';
 import { ILoginService } from '../../services/interfaces/i-login-service';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../inversify/types';
 
+@injectable()
 export class LoginController implements ILoginController {
-  constructor(
-    private readonly _loginService: ILoginService
-  ) {}
+  constructor(@inject(TYPES.LoginService) private readonly _loginService: ILoginService) {}
 
   /**
    * Authenticates a user using their mobile number

@@ -7,9 +7,13 @@ import {
   IAdminCallback,
 } from "../interfaces/i-admin-controller";
 import { PaginatedUserListDTO, PaginationQuery } from "../../dto/response/pagination.dto";
+import { TYPES } from "../../inversify/types";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class AdminController implements IAdminController {
-  constructor(private readonly _adminService: IAdminService) {}
+  
+  constructor(@inject(TYPES.AdminService) private _adminService: IAdminService) {}
 
   /**
    * Retrieves active users

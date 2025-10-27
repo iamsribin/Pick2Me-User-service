@@ -3,8 +3,10 @@ import { AppDataSource } from "../../config/sql-database";
 import { handleControllerError } from "../../utilities/handleError";
 import { ObjectLiteral } from "typeorm";
 import { IBaseRepository } from "../interface/i-base-repo";
+import { injectable } from "inversify";
 
-export default class BaseRepository<T extends ObjectLiteral>
+@injectable()
+export class BaseRepository<T extends ObjectLiteral>
   implements IBaseRepository<T>
 {
   protected repo: Repository<T>;

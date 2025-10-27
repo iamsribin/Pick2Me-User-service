@@ -6,11 +6,14 @@ import { LoginResponseDto } from '../../dto/response/login-response.dto';
 import { LoginTransformer } from '../../dto/transformer/login-transformer.dto';
 import { User } from '../../entities/user.entity';
 import { IUserRepository } from '../../repositories/interface/i-user-repository';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../inversify/types';
 
+@injectable()
 export class LoginService implements ILoginService {
   constructor(
-    private readonly userRepo: IUserRepository,
-    private readonly authService: AuthService
+    @inject(TYPES.UserRepository) private readonly userRepo: IUserRepository,
+    @inject(TYPES.AuthService) private readonly authService: AuthService
   ) {}
 
   /**

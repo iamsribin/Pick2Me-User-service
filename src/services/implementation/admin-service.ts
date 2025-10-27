@@ -11,9 +11,12 @@ import {
   IUserDto,
 } from "../../dto/response/i-profile.dto";
 import { IAdminRepository } from "../../repositories/interface/i-admin-repository";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../inversify/types";
 
+@injectable()
 export class AdminService implements IAdminService {
-  constructor(private readonly _adminRepo: IAdminRepository) {}
+  constructor(@inject(TYPES.AdminRepository) private readonly _adminRepo: IAdminRepository) {}
 
 async getUserWithStatusPaginated(
   status: "Good" | "Block",

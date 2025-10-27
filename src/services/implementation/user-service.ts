@@ -1,11 +1,15 @@
+import { inject, injectable } from "inversify";
 import { StatusCode } from "../../dto/common";
 import { IResponse } from "../../dto/request/user-response.dto";
 import { UserProfileDto } from "../../dto/response/user-response.dto";
 import { IUserRepository } from "../../repositories/interface/i-user-repository";
 import { IUserService } from "../interfaces/i-user-service";
+import { TYPES } from "../../inversify/types";
 
+@injectable()
 export class UserService implements IUserService {
-  constructor(private readonly _userRepo: IUserRepository) {}
+  constructor(
+ @inject(TYPES.UserRepository) private _userRepo: IUserRepository) {}
 
   async fetchUserProfile(id: string): Promise<IResponse<UserProfileDto>> {
     try {

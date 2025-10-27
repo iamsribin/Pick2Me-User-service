@@ -1,8 +1,10 @@
+import { injectable } from 'inversify';
 import { User } from '../../entities/user.entity';
 import { handleControllerError } from '../../utilities/handleError';
 import { IUserRepository } from '../interface/i-user-repository';
-import BaseRepository from './base-repo';
+import { BaseRepository } from './base-repo';
 
+@injectable()
 export class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     super(User);

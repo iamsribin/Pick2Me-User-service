@@ -15,15 +15,18 @@ import { REGISTRATION_CONSTANTS } from '../../constants/registration-constants';
 import { JwtPayload } from 'jsonwebtoken';
 import { RegisterUserDataDto } from '../../dto/request/registration-request.dto';
 import { IUserRepository } from '../../repositories/interface/i-user-repository';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../inversify/types';
 
 interface OtpPayload extends JwtPayload {
   clientId: string;
 }
 
+@injectable()
 export class RegistrationService implements IRegistrationService {
   constructor(
-    private readonly userRepo: IUserRepository,
-    private readonly authService: AuthService
+   @inject(TYPES.UserRepository) private readonly userRepo: IUserRepository,
+   @inject(TYPES.AuthService)private readonly authService: AuthService
   ) {}
 
   /**
