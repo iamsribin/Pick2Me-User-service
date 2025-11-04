@@ -17,6 +17,7 @@ authRouter.post("/checkUser", catchAsync(registrationController.checkUser));
 authRouter.post("/resendOtp", catchAsync(registrationController.resendOtp));
 authRouter.post("/checkLoginUser", catchAsync(registrationController.checkLoginUser));
 authRouter.post("/checkGoogleLoginUser", catchAsync(registrationController.checkGoogleLoginUser));
+authRouter.post("/refresh", catchAsync(registrationController.refreshToken));
 authRouter.delete("/logout", catchAsync(registrationController.logout))
 
 export { authRouter };

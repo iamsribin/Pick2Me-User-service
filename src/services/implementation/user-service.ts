@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { StatusCode } from "../../dto/common";
 import { IResponse } from "../../dto/request/user-response.dto";
 import { UserProfileDto } from "../../dto/response/user-response.dto";
 import { IUserRepository } from "../../repositories/interface/i-user-repository";
 import { IUserService } from "../interfaces/i-user-service";
 import { TYPES } from "../../inversify/types";
+import { StatusCode } from "@retro-routes/shared";
 
 @injectable()
 export class UserService implements IUserService {

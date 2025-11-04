@@ -12,6 +12,7 @@ import {
 import { IAdminRepository } from "../../repositories/interface/i-admin-repository";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../inversify/types";
+import { BadRequestError } from "@retro-routes/shared";
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -28,12 +29,14 @@ async getUserWithStatusPaginated(
     const validatedLimit = Math.min(50, Math.max(1, limit));
     const trimmedSearch = search.trim();
 
-    const { users, totalCount } = await this._adminRepo.findUsersByStatusWithPagination(
+    const users = await this._adminRepo.findUsersByStatusWithPagination(
       status,
       validatedPage,
       validatedLimit,
       trimmedSearch
     );
+
+    if(!Array.isArray(users)) throw BadRequestError()
 
     const transformedUsers: UserDto[] = plainToInstance(UserDto, users, {
       excludeExtraneousValues: true,
@@ -41,10 +44,10 @@ async getUserWithStatusPaginated(
 
     const pagination = {
       currentPage: validatedPage,
-      totalPages: Math.ceil(totalCount / validatedLimit),
-      totalItems: totalCount,
+      totalPages: Math.ceil(users.totalCount / validatedLimit),
+      totalItems: users.totalCount,
       itemsPerPage: validatedLimit,
-      hasNextPage: validatedPage < Math.ceil(totalCount / validatedLimit),
+      hasNextPage: validatedPage < Math.ceil(users.totalCount / validatedLimit),
       hasPreviousPage: validatedPage > 1,
     };
 
@@ -62,7 +65,7 @@ async getUserWithStatusPaginated(
 async getUserWithStatus(status: "Good" | "Block"): Promise<UserListDTO> {
   try {
     const users = await this._adminRepo.findUsersByStatus(status);
-
+    if(!Array.isArray(users)) throw BadRequestError()
     const transformedUsers: UserDto[] = plainToInstance(UserDto, users, {
       excludeExtraneousValues: true,
     });

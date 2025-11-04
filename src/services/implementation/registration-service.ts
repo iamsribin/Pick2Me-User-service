@@ -9,20 +9,14 @@ import {
   ResendOtpResponseDto 
 } from '../../dto/response/registration-response.dto';
 import { REGISTRATION_CONSTANTS } from '../../constants/registration-constants';
-import { JwtPayload } from 'jsonwebtoken';
 import { RegisterUserDataDto } from '../../dto/request/registration-request.dto';
 import { IUserRepository } from '../../repositories/interface/i-user-repository';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../inversify/types';
-import { LoginTransformer } from '../../dto/transformer/login-transformer.dto';
 import { LoginResponseDto } from '../../dto/response/login-response.dto';
-import { AccessPayload, BadRequestError, bcryptService, ConflictError, ForbiddenError, generateJwtToken, getRedisService, HttpError, InternalError, NotFoundError, UnauthorizedError, verifyToken } from '@retro-routes/shared';
+import { AccessPayload, BadRequestError, ConflictError, ForbiddenError, generateJwtToken, getRedisService, HttpError, InternalError, NotFoundError, UnauthorizedError, verifyToken } from '@retro-routes/shared';
 import { sanitizeService } from '../../utils/sql-validation/sanitization';
 import generateOTP from '../../utils/generateOtp';
-
-interface OtpPayload extends JwtPayload {
-  clientId: string;
-}
 
 @injectable()
 export class RegistrationService implements IRegistrationService {
@@ -46,7 +40,7 @@ export class RegistrationService implements IRegistrationService {
 
         if (!user) {
         throw NotFoundError("Account not found. Please create a new account.","/signup")
-      }
+       }
         
         if(user?.account_status =="Block"){
         throw UnauthorizedError("Your account is blocked. Please contact support!")
@@ -96,9 +90,7 @@ export class RegistrationService implements IRegistrationService {
       try {
         // Validate email format
         if (!email || typeof email !== 'string' || email.trim().length === 0) {
-          return LoginTransformer.transformToLoginResponse({
-            message: 'Please provide a valid email address.'
-          });
+           throw BadRequestError('Please provide a valid email address.')
         }
   
         const user = await this._userRepo.findByEmail(email.trim().toLowerCase());
@@ -137,13 +129,13 @@ export class RegistrationService implements IRegistrationService {
         }
   
       } catch (error) {
-        console.error('Google authentication error:', error);
-        throw new Error( 'Google authentication failed');
+        if(error instanceof HttpError) throw  error
+        throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);;
       }
     }
 
-    async refreshToken(token: string): Promise<{accessToken:string}> {
-
+  async refreshToken(token: string): Promise<{accessToken:string}> {
+  try {
     if (!token) throw ForbiddenError("no token provided");
   
     const payload = verifyToken(token, process.env.JWT_REFRESH_TOKEN_SECRET as string) as AccessPayload;
@@ -164,7 +156,11 @@ export class RegistrationService implements IRegistrationService {
     );
   
     return { accessToken };
+  } catch (error) {
+    if(error instanceof HttpError) throw  error
+    throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
   }
+}
 
   /**
    * Registers a new user
@@ -191,13 +187,11 @@ export class RegistrationService implements IRegistrationService {
 
       // Create new user
       const referral_code = generateReferralCode();
-      // const hashedPassword = await bcryptService.securePassword(userData.password);
 
       const newUserData = {
         name: userData.name,
         email: userData.email,
         mobile: userData.mobile,
-        // password: hashedPassword,
         referral_code,
         user_image: userData.user_image,
       };
@@ -218,9 +212,7 @@ export class RegistrationService implements IRegistrationService {
         }
       });
     
-    } catch (error) {
-      console.log("hsdkhfa",error);
-      
+    } catch (error) {      
       if(error instanceof HttpError) throw  error
       throw InternalError("something went wrong");
     }
@@ -266,7 +258,7 @@ export class RegistrationService implements IRegistrationService {
       );
     } catch (error) {
       if(error instanceof HttpError) throw error
-      throw error
+      throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
   }
 
@@ -302,7 +294,7 @@ export class RegistrationService implements IRegistrationService {
 
     } catch (error) {
       if(error instanceof HttpError) throw error
-      throw new Error('something went wrong');
+      throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
   }
 
@@ -333,7 +325,7 @@ export class RegistrationService implements IRegistrationService {
       return await this.registerUser(userData);
     } catch (error) {
       if (error instanceof HttpError) throw error
-      throw new Error( 'something went wrong');
+      throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
   }
 }

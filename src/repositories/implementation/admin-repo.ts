@@ -17,7 +17,7 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
     page: number = 1,
     limit: number = 6,
     search: string = ''
-  ): Promise<{ users: User[]; totalCount: number }> {
+  ): Promise<{ users: User[]; totalCount: number }| null> {
     try {
       const offset = (page - 1) * limit;
       
@@ -96,12 +96,12 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         return { users, totalCount };
       }
     } catch (error) {
-      throw new Error( 'Find users by status with pagination');
+      return null
     }
   }
 
   // Keep the original method for backward compatibility
-  async findUsersByStatus(status: 'Good' | 'Block'): Promise<User[]> {
+  async findUsersByStatus(status: 'Good' | 'Block'): Promise<User[]|null> {
     try {
       return await this.repo.find({
         where: {
@@ -126,7 +126,7 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         },
       });
     } catch (error) {
-      throw new Error( 'Find users by status');
+      return null
     }
   }
 
@@ -137,7 +137,7 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         relations: ['transactions'],
       });
     } catch (error) {
-      throw new Error( 'Get user with transactions');
+      return null
     }
   }
 
@@ -146,7 +146,7 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
       await this.repo.update(id, { account_status: status, reason });
       return await this.repo.findOne({ where: { id } });
     } catch (error) {
-      throw new Error( 'Update user status');
+      return null
     }
   }
 }

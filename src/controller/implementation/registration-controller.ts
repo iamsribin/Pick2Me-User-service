@@ -34,8 +34,6 @@ export class RegistrationController {
         if (file) {
             user_image = await uploadToS3Public(file);
             }
-          console.log("userImage",user_image);
-
 
     const payload = { name, email, mobile, password, reffered_Code, user_image };
 
@@ -76,15 +74,7 @@ export class RegistrationController {
       const { email, name } = req.body;
   
       const result = await this._registrationService.generateAndSendOtp(email, name);
-  
-      // const cookieOptions = {
-      //   httpOnly: true,
-      //   expires: new Date(Date.now() + 180_000),
-      //   sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
-      //   secure: process.env.NODE_ENV === "production",
-      // };
-  
-      // res.cookie("otp", result.token, cookieOptions);
+
       res.status(201).json(result);
       
     } catch (error) {
@@ -125,7 +115,7 @@ export class RegistrationController {
         try {
             const refreshToken = req.cookies.refreshToken;
 
-            // if (!req.cookies) throw ForbiddenError("token missing")
+            if (!req.cookies) throw ForbiddenError("token missing")
 
             const accessToken  = await this._registrationService.refreshToken(refreshToken);
             res.status(200).json({accessToken });
@@ -153,8 +143,8 @@ export class RegistrationController {
         try {     
           console.log("logout");
                
-             res.clearCookie("refreshToken");
-            res.status(StatusCode.OK).json({ message: "successfully logged out" })
+          res.clearCookie("refreshToken");
+          res.status(StatusCode.OK).json({ message: "successfully logged out" })
         } catch (err) {
           console.log("err",err);
           
