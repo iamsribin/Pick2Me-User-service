@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { inject, injectable } from "inversify";
-import { IAdminService } from "../../services/interfaces/i-admin-service";
-import { TYPES } from "../../inversify/types";
+import { Request, Response, NextFunction } from 'express';
+import { inject, injectable } from 'inversify';
+import { IAdminService } from '../../services/interfaces/i-admin-service';
+import { TYPES } from '../../types/container-type';
 
 @injectable()
 export class AdminController {
@@ -14,13 +14,13 @@ export class AdminController {
    */
   getUsersList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { page = "1", limit = "6", search = "", status } = req.query;
+      const { page = '1', limit = '6', search = '', status } = req.query;
 
       const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
       const limitNum = Math.min(50, Math.max(1, parseInt(String(limit), 10) || 6));
 
       const result = await this._adminService.getUserWithStatusPaginated(
-        status as "Good" | "Block",
+        status as 'Good' | 'Block',
         pageNum,
         limitNum,
         String(search).trim()
@@ -41,13 +41,13 @@ export class AdminController {
    */
   getBlockedUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { page = "1", limit = "6", search = "" } = req.query;
+      const { page = '1', limit = '6', search = '' } = req.query;
 
       const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
       const limitNum = Math.min(50, Math.max(1, parseInt(String(limit), 10) || 6));
 
       const result = await this._adminService.getUserWithStatusPaginated(
-        "Block",
+        'Block',
         pageNum,
         limitNum,
         String(search).trim()
@@ -69,18 +69,18 @@ export class AdminController {
    */
   getUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const id = String(req.query.id || "");
+      const id = String(req.query.id || '');
 
       if (!id) {
-         res.status(400).json({ message: "Missing user id" });
-         return
+        res.status(400).json({ message: 'Missing user id' });
+        return;
       }
 
       const data = await this._adminService.getUserDetails(id);
 
       if (!data) {
-         res.status(404).json({ message: "User not found" });
-         return
+        res.status(404).json({ message: 'User not found' });
+        return;
       }
 
       res.status(200).json({ user: data });
@@ -96,17 +96,17 @@ export class AdminController {
    */
   updateUserStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const id = String(req.query.id || "");
+      const id = String(req.query.id || '');
       const { status, reason } = req.body;
 
-      if (!id) res.status(400).json({ message: "Missing user id" });
-      if (!status || (status !== "Good" && status !== "Block")) {
-         res.status(400).json({ message: "Invalid status. Allowed: Good | Block" });
+      if (!id) res.status(400).json({ message: 'Missing user id' });
+      if (!status || (status !== 'Good' && status !== 'Block')) {
+        res.status(400).json({ message: 'Invalid status. Allowed: Good | Block' });
       }
 
       const response = await this._adminService.updateUserStatus(id, status, reason);
 
-      res.status(200).json({ message: "Success", userId: id, result: response });
+      res.status(200).json({ message: 'Success', userId: id, result: response });
     } catch (err) {
       next(err);
     }

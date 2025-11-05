@@ -1,4 +1,4 @@
-import { StatusCode } from "@retro-routes/shared";
+import { StatusCode } from '@retro-routes/shared';
 
 export interface IResponse<T> {
   status: StatusCode;

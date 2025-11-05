@@ -1,4 +1,4 @@
-import { RegisterUserDataDto } from "../../dto/request/registration-request.dto";
+import { RegisterUserDataDto } from '../../dto/request/registration-request.dto';
 
 interface ValidationResult {
   isValid: boolean;
@@ -13,10 +13,10 @@ export class RegistrationValidation {
    */
   static isValidMobile(mobile: string): boolean {
     if (!mobile || typeof mobile !== 'string') return false;
-    
+
     const cleanMobile = mobile.replace(/\s+/g, '');
     const mobileRegex = /^[0-9]{10,15}$/;
-    
+
     return mobileRegex.test(cleanMobile);
   }
 
@@ -27,7 +27,7 @@ export class RegistrationValidation {
    */
   static isValidEmail(email: string): boolean {
     if (!email || typeof email !== 'string') return false;
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email.trim());
   }
@@ -39,7 +39,7 @@ export class RegistrationValidation {
    */
   static isValidPassword(password: string): boolean {
     if (!password || typeof password !== 'string') return false;
-    
+
     // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
@@ -52,7 +52,7 @@ export class RegistrationValidation {
    */
   static isValidName(name: string): boolean {
     if (!name || typeof name !== 'string') return false;
-    
+
     const trimmedName = name.trim();
     return trimmedName.length >= 2 && trimmedName.length <= 50;
   }
@@ -83,7 +83,7 @@ export class RegistrationValidation {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

@@ -1,15 +1,13 @@
-
 export interface ServiceResponse {
   message: string;
-  data ?: any;
+  data?: any;
 }
-
 
 export interface AuthResponse {
   token?: string;
-  refreshToken? :string,
+  refreshToken?: string;
   message: string;
-  name:string,
-  _id:string,
-  role:boolean
+  name: string;
+  _id: string;
+  role: boolean;
 }

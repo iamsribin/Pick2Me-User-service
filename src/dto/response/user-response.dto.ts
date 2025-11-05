@@ -23,7 +23,7 @@ export interface UserProfileDto {
   userImage: string | null;
   referralCode: string | null;
   joiningDate: Date;
-  accountStatus: "Good" | "Block";
+  accountStatus: 'Good' | 'Block';
   wallet: WalletDto;
   rideDetails: RideDetailsDto;
 }

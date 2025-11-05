@@ -1,6 +1,6 @@
-import { plainToClass } from "class-transformer";
-import { LoginResponseDto } from "../response/login-response.dto";
-import { ServiceResponse } from "../serviceResponse";
+import { plainToClass } from 'class-transformer';
+import { LoginResponseDto } from '../response/login-response.dto';
+import { ServiceResponse } from '../serviceResponse';
 
 export class LoginTransformer {
   static transformToLoginResponse(serviceResponse: ServiceResponse): LoginResponseDto {
@@ -13,7 +13,7 @@ export class LoginTransformer {
         _id: '',
         role: '',
         mobile: '',
-        profile: ''
+        profile: '',
       });
     }
 
@@ -25,7 +25,7 @@ export class LoginTransformer {
       _id: serviceResponse.data._id || '',
       role: serviceResponse.data.role || '',
       mobile: serviceResponse.data.mobile || '',
-      profile: serviceResponse.data.profile || ''
+      profile: serviceResponse.data.profile || '',
     });
   }
 }

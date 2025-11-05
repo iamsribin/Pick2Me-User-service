@@ -1,4 +1,4 @@
-import { UserDto } from "../transformer/user.dto";
+import { UserDto } from '../transformer/user.dto';
 
 export interface AdminUpdateUserStatusResponse {
   message: string;
@@ -6,7 +6,7 @@ export interface AdminUpdateUserStatusResponse {
 }
 
 export class UserListDTO {
-  Users: UserDto[]=[];
+  Users: UserDto[] = [];
 }
 
 export interface IUpdateUserStatusGrpcResponse {

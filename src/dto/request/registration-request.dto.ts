@@ -25,6 +25,5 @@ export interface RegisterUserDataDto {
   mobile: string;
   // password: string;
   reffered_Code?: string;
-  user_image?: string ;
+  user_image?: string;
 }
-

@@ -1,5 +1,5 @@
-import { IAdminController } from "../../controller/interfaces/i-admin-controller";
-import { IRegistrationController } from "../../controller/interfaces/i-register-controller";
+import { IAdminController } from '../../controller/interfaces/i-admin-controller';
+import { IRegistrationController } from '../../controller/interfaces/i-register-controller';
 
 type Handlers = {
   registrationController: IRegistrationController;

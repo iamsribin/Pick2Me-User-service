@@ -1,14 +1,14 @@
-import { Expose } from "class-transformer";
+import { Expose } from 'class-transformer';
 
 export class RegisterResponseDto {
   @Expose()
   name!: string;
-    
+
   @Expose()
-  role!: string;  
-  
+  role!: string;
+
   @Expose()
-  id!: string; 
+  id!: string;
 
   @Expose()
   data?: {

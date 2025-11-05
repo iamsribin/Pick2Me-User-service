@@ -1,10 +1,10 @@
-import { UserDto } from "../transformer/user.dto";
+import { UserDto } from '../transformer/user.dto';
 
 export interface PaginationQuery {
   page?: string;
   limit?: string;
   search?: string;
-  status: "Good" | "Block";
+  status: 'Good' | 'Block';
 }
 
 export interface PaginatedUserListDTO {

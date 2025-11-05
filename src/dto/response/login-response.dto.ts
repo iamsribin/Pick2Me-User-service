@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose } from 'class-transformer';
 
 export class LoginResponseDto {
   @Expose()
@@ -20,8 +20,8 @@ export class LoginResponseDto {
   refreshToken!: string;
 
   // @Expose()
-  // mobile?: string; 
+  // mobile?: string;
 
   // @Expose()
-  // profile?: string; 
+  // profile?: string;
 }

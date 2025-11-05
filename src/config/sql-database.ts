@@ -1,12 +1,11 @@
-import { DataSource } from 'typeorm'
-import { User } from '../entities/user.entity'
-import dotenv from 'dotenv'
-import { WalletTransaction } from '../entities/wallet-transaction.entity'
+import { DataSource } from 'typeorm';
+import dotenv from 'dotenv';
+import { User } from '../model/user-schema';
 
-dotenv.config()
+dotenv.config();
 
 export const AppDataSource = new DataSource({
-  type: 'postgres', 
+  type: 'postgres',
   host: process.env.SQL_HOST,
   port: Number(process.env.SQL_PORT),
   username: process.env.SQL_USER,
@@ -14,15 +13,14 @@ export const AppDataSource = new DataSource({
   database: process.env.SQL_DB,
   synchronize: true, // false in production
   logging: false,
-  entities: [User,WalletTransaction],
-})
-
+  entities: [User],
+});
 
 export const connectSQL = async (): Promise<void> => {
   try {
-    await AppDataSource.initialize()
-    console.log('✅ SQL Database connected')
+    await AppDataSource.initialize();
+    console.log('✅ SQL Database connected');
   } catch (error) {
-    console.error('❌ Error connecting to SQL DB:', error)
+    console.error('❌ Error connecting to SQL DB:', error);
   }
-}
+};

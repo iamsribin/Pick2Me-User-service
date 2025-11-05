@@ -11,9 +11,9 @@ export interface IUser {
   joining_date: Date;
   account_status: 'Good' | 'Block';
   reason?: string;
-  role: "Admin" | "User";
+  role: 'Admin' | 'User';
   wallet_balance?: number;
   cancel_ride_count?: number;
   completed_ride_count?: number;
-  transactions?: IWalletTransaction[]; 
+  transactions?: IWalletTransaction[];
 }

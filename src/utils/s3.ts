@@ -1,10 +1,10 @@
-import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({
   region: process.env.AWS_S3_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   },
 });
 
@@ -22,10 +22,10 @@ async function uploadToS3(file: Express.Multer.File): Promise<string> {
 
   try {
     await s3Client.send(command);
-    console.log("Uploaded to S3:", filename);
+    console.log('Uploaded to S3:', filename);
     return filename;
   } catch (error) {
-    console.error("S3 upload error:", error);
+    console.error('S3 upload error:', error);
     throw error;
   }
 }
@@ -33,7 +33,7 @@ async function uploadToS3(file: Express.Multer.File): Promise<string> {
 export default uploadToS3;
 
 export async function uploadToS3Public(file: Express.Multer.File) {
-  const filename = Date.now().toString() + "-" + file.originalname;
+  const filename = Date.now().toString() + '-' + file.originalname;
 
   const s3Client = new S3Client({
     region: process.env.AWS_S3_REGION,
@@ -54,14 +54,13 @@ export async function uploadToS3Public(file: Express.Multer.File) {
 
   try {
     await s3Client.send(command);
-    console.log("Uploaded file to S3 successfully.");
+    console.log('Uploaded file to S3 successfully.');
 
     // Construct the file URL
     const fileUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${filename}`;
     return fileUrl;
   } catch (error) {
-    console.error("Error uploading file to S3:", error);
+    console.error('Error uploading file to S3:', error);
     return (error as Error).message;
   }
 }
-

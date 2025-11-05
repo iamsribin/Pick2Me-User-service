@@ -1,0 +1,15 @@
+{
+  "env": { "node": true, "es2021": true },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"                      // put Prettier last
+  ],
+  "rules": {
+    "prettier/prettier": "warn",
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
+  }
+}

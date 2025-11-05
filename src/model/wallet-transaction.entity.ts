@@ -1,4 +1,3 @@
-// wallet-transaction.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,7 +6,7 @@ import {
   CreateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from './user-schema';
 
 @Entity()
 export class WalletTransaction {
@@ -29,11 +28,11 @@ export class WalletTransaction {
   @Column({ type: 'float' })
   amount!: number;
 
-  @Column({ type: "enum", enum: ["Debit", "Credit"] })
-  status!: "Debit" | "Credit";
+  @Column({ type: 'enum', enum: ['Debit', 'Credit'] })
+  status!: 'Debit' | 'Credit';
 
   @ManyToOne(() => User, (user) => user.transactions, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
   user!: User;

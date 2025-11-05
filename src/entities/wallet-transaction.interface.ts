@@ -6,5 +6,5 @@ export interface IWalletTransaction {
   ride_id: string;
   amount: number;
   status: 'Debit' | 'Credit';
-  user: string; 
+  user: string;
 }

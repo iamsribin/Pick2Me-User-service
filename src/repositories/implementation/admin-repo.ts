@@ -1,12 +1,12 @@
 import { injectable } from 'inversify';
-import { User } from '../../entities/user.entity';
 import { IAdminRepository } from '../interface/i-admin-repository';
-import { Like, ILike } from 'typeorm'; 
+import { Like, ILike } from 'typeorm';
 import { AppDataSource } from '../../config/sql-database';
 import { SqlBaseRepository } from '@Pick2Me/shared';
+import { User } from '../../model/user-schema';
 
 @injectable()
-export class AdminRepository extends SqlBaseRepository<User> implements IAdminRepository  {
+export class AdminRepository extends SqlBaseRepository<User> implements IAdminRepository {
   constructor() {
     super(User, AppDataSource);
   }
@@ -17,10 +17,10 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
     page: number = 1,
     limit: number = 6,
     search: string = ''
-  ): Promise<{ users: User[]; totalCount: number }| null> {
+  ): Promise<{ users: User[]; totalCount: number } | null> {
     try {
       const offset = (page - 1) * limit;
-      
+
       // Base query conditions
       const baseWhere: any = {
         account_status: status,
@@ -48,7 +48,6 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
               'referral_code',
               'account_status',
               'joining_date',
-              'wallet_balance',
               'cancel_ride_count',
               'completed_ride_count',
             ],
@@ -78,7 +77,6 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
               'referral_code',
               'account_status',
               'joining_date',
-              'wallet_balance',
               'cancel_ride_count',
               'completed_ride_count',
             ],
@@ -96,17 +94,17 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         return { users, totalCount };
       }
     } catch (error) {
-      return null
+      return null;
     }
   }
 
   // Keep the original method for backward compatibility
-  async findUsersByStatus(status: 'Good' | 'Block'): Promise<User[]|null> {
+  async findUsersByStatus(status: 'Good' | 'Block'): Promise<User[] | null> {
     try {
       return await this.repo.find({
         where: {
           account_status: status,
-          role: "Admin",
+          role: 'Admin',
         },
         select: [
           'id',
@@ -117,7 +115,6 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
           'referral_code',
           'account_status',
           'joining_date',
-          'wallet_balance',
           'cancel_ride_count',
           'completed_ride_count',
         ],
@@ -126,7 +123,7 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         },
       });
     } catch (error) {
-      return null
+      return null;
     }
   }
 
@@ -137,16 +134,20 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
         relations: ['transactions'],
       });
     } catch (error) {
-      return null
+      return null;
     }
   }
 
-  async updateUserStatus(id: string, status: 'Good' | 'Block', reason: string): Promise<User | null> {
+  async updateUserStatus(
+    id: string,
+    status: 'Good' | 'Block',
+    reason: string
+  ): Promise<User | null> {
     try {
       await this.repo.update(id, { account_status: status, reason });
       return await this.repo.findOne({ where: { id } });
     } catch (error) {
-      return null
+      return null;
     }
   }
 }

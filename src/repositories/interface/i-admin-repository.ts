@@ -13,13 +13,13 @@ export interface IAdminRepository {
     page?: number,
     limit?: number,
     search?: string
-  ): Promise<{ users: User[]; totalCount: number }| null>;
+  ): Promise<{ users: User[]; totalCount: number } | null>;
 
   /**
    * Find all users by status without pagination.
    * @param status - Filter by account status ("Good" or "Block")
    */
-  findUsersByStatus(status: 'Good' | 'Block'): Promise<User[]|null>;
+  findUsersByStatus(status: 'Good' | 'Block'): Promise<User[] | null>;
 
   /**
    * Get a single user's full details including relations (like transactions).
@@ -33,9 +33,5 @@ export interface IAdminRepository {
    * @param status - New status ("Good" or "Block")
    * @param reason - Reason for status change
    */
-  updateUserStatus(
-    id: string,
-    status: 'Good' | 'Block',
-    reason: string
-  ): Promise<User | null>;
+  updateUserStatus(id: string, status: 'Good' | 'Block', reason: string): Promise<User | null>;
 }
