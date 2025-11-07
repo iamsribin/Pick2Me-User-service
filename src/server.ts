@@ -9,7 +9,7 @@ import { createRedisService } from '@Pick2Me/shared';
 
 const startServer = async () => {
   try {
-    // check all env are defined 
+    // check all env are defined
     isEnvDefined();
 
     // connect to db

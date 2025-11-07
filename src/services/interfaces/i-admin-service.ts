@@ -6,12 +6,7 @@ export interface IAdminService {
 
   getUserDetails(id: string): Promise<IUserDto>;
 
-  getUserWithStatusPaginated(
-    status: 'Good' | 'Block',
-    page: number,
-    limit: number,
-    search: string
-  ): Promise<any>;
+  getUserList(status: 'Good' | 'Block', page: number, limit: number, search: string): Promise<any>;
 
   updateUserStatus(
     id: string,

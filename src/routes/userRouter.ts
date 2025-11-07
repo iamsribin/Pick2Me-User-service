@@ -18,6 +18,7 @@ userRouter.post(
   upload.fields([{ name: 'file', maxCount: 1 }]),
   catchAsync(userController.uploadChatFile)
 );
-userRouter.get('/get-my-profile', catchAsync(userController.fetchUserProfile));
-
+userRouter.get('/me', catchAsync(userController.fetchProfile));
+userRouter.put('/me/avatar', upload.single('avatar'), catchAsync(userController.updateAvatar));
+userRouter.put('/me/name', catchAsync(userController.updateName));
 export { userRouter };

@@ -27,3 +27,8 @@ export interface UserProfileDto {
   wallet: WalletDto;
   rideDetails: RideDetailsDto;
 }
+
+export interface AvatarData {
+  id: string;
+  file: Express.Multer.File;
+}

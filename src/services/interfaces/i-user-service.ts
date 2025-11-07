@@ -1,6 +1,8 @@
 import { IResponse } from '@Pick2Me/shared';
-import { UserProfileDto } from '../../dto/response/user-response.dto';
+import { AvatarData, UserProfileDto } from '../../dto/response/user-response.dto';
 
 export interface IUserService {
-  fetchUserProfile(id: string): Promise<IResponse<UserProfileDto>>;
+  fetchProfile(id: string): Promise<IResponse<UserProfileDto>>;
+  updateAvatar(avatarData: AvatarData): Promise<IResponse<null>>;
+  updateName(nameUpdateData: { newName: string; id: string }): Promise<IResponse<null>>;
 }

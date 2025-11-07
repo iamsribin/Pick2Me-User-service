@@ -2,13 +2,14 @@ import express from 'express';
 import container from '../config/inversify.config';
 import { AdminController } from '../controller/admin-controller';
 import { TYPES } from '../types/container-type';
-import { catchAsync } from '@Pick2Me/shared';
+import { catchAsync, verifyGatewayJwt } from '@Pick2Me/shared';
 
 const adminUserController = container.get<AdminController>(TYPES.AdminController);
 
-const adminRoute = express.Router();
+export const adminRoute = express.Router();
 
-adminRoute.get('/getActiveUserData', catchAsync(adminUserController.getUsersList));
-adminRoute.get('/blockedUserData', adminUserController.getUsersList);
+adminRoute.use(verifyGatewayJwt(true, process.env.GATEWAY_SHARED_SECRET!));
+
+adminRoute.get('/users', catchAsync(adminUserController.getUserList));
 adminRoute.get('/userData', adminUserController.getUserData);
 adminRoute.patch('/updateUserStatus', adminUserController.updateUserStatus);

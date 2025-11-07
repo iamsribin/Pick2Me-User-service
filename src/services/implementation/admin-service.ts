@@ -1,4 +1,4 @@
-import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { IAdminService } from '../interfaces/i-admin-service';
 import { UserDto } from '../../dto/transformer/user.dto';
 import { UserProfileResponseDto } from '../../dto/transformer/user-profile.dto';
@@ -7,51 +7,71 @@ import { IUserDto } from '../../dto/response/profile.dto';
 import { IAdminRepository } from '../../repositories/interface/i-admin-repository';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../types/container-type';
-import { BadRequestError } from '@Pick2Me/shared';
+import { BadRequestError, HttpError, InternalError } from '@Pick2Me/shared';
 
 @injectable()
 export class AdminService implements IAdminService {
   constructor(@inject(TYPES.AdminRepository) private readonly _adminRepo: IAdminRepository) {}
 
-  async getUserWithStatusPaginated(
+  async getUserList(
     status: 'Good' | 'Block',
     page: number = 1,
     limit: number = 6,
     search: string = ''
-  ): Promise<any> {
+  ): Promise<{
+    users: UserDto[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    } | null;
+  }> {
     try {
       const validatedPage = Math.max(1, page);
       const validatedLimit = Math.min(50, Math.max(1, limit));
       const trimmedSearch = search.trim();
 
-      const users = await this._adminRepo.findUsersByStatusWithPagination(
+      const usersResult = await this._adminRepo.findUsersByStatusWithPagination(
         status,
         validatedPage,
         validatedLimit,
         trimmedSearch
       );
 
-      if (!Array.isArray(users)) throw BadRequestError();
+      if (!usersResult || !Array.isArray(usersResult.users)) {
+        return {
+          users: [],
+          pagination: null,
+        };
+      }
 
-      const transformedUsers: UserDto[] = plainToInstance(UserDto, users, {
+      const transformedUsers: UserDto[] = plainToInstance(UserDto, usersResult.users, {
         excludeExtraneousValues: true,
       });
 
+      const totalCount = Number(usersResult.totalCount || 0);
+      const totalPages = totalCount === 0 ? 1 : Math.ceil(totalCount / validatedLimit);
+
       const pagination = {
         currentPage: validatedPage,
-        totalPages: Math.ceil(users.totalCount / validatedLimit),
-        totalItems: users.totalCount,
+        totalPages,
+        totalItems: totalCount,
         itemsPerPage: validatedLimit,
-        hasNextPage: validatedPage < Math.ceil(users.totalCount / validatedLimit),
+        hasNextPage: validatedPage < totalPages,
         hasPreviousPage: validatedPage > 1,
       };
 
-      return instanceToPlain({
+      return {
         users: transformedUsers,
         pagination,
-      });
+      };
     } catch (error) {
-      throw new Error('Paginated user data retrieval');
+      // include original error in log for debugging
+      console.error('getUserList error:', error);
+      throw new Error('Paginated user data retrieval failed');
     }
   }
 
@@ -65,7 +85,8 @@ export class AdminService implements IAdminService {
 
       return { Users: transformedUsers };
     } catch (error) {
-      throw new Error('User data retrieval');
+      if (error instanceof HttpError) throw error;
+      throw InternalError('something went wrong');
     }
   }
   async getUserDetails(id: string): Promise<IUserDto> {
@@ -78,7 +99,7 @@ export class AdminService implements IAdminService {
       });
 
       return transformed;
-    } catch (error) {
+    } catch {
       throw new Error('User details retrieval');
     }
   }
@@ -96,7 +117,7 @@ export class AdminService implements IAdminService {
       }
 
       return { message: 'User status updated successfully', user_id: user.id };
-    } catch (error) {
+    } catch {
       throw new Error('User status update');
     }
   }

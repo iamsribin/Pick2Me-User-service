@@ -3,11 +3,11 @@ import { inject, injectable } from 'inversify';
 import { IUserService } from '../services/interfaces/i-user-service';
 import { TYPES } from '../types/container-type';
 import { uploadToS3Public } from '../utils/s3';
-import { UnauthorizedError } from '@Pick2Me/shared';
+import { BadRequestError, UnauthorizedError } from '@Pick2Me/shared';
 
 @injectable()
 export class UserController {
-  constructor(@inject(TYPES.UserService) private readonly userService: IUserService) {}
+  constructor(@inject(TYPES.UserService) private readonly _userService: IUserService) {}
 
   uploadChatFile = async (req: Request, res: Response, _next: NextFunction) => {
     try {
@@ -25,7 +25,7 @@ export class UserController {
     }
   };
 
-  fetchUserProfile = async (req: Request, res: Response, _next: NextFunction) => {
+  fetchProfile = async (req: Request, res: Response, _next: NextFunction) => {
     try {
       res.setHeader('Cache-Control', 'no-store, no-cache');
 
@@ -34,10 +34,50 @@ export class UserController {
 
       if (!user) throw UnauthorizedError('Missing authentication token');
 
-      const result = await this.userService.fetchUserProfile(user.id);
+      const result = await this._userService.fetchProfile(user.id);
       console.log(result);
 
       return res.status(+result.status).json(result.data);
+    } catch (error) {
+      _next(error);
+    }
+  };
+
+  updateAvatar = async (req: Request, res: Response, _next: NextFunction) => {
+    try {
+      const user = req.gatewayUser!;
+
+      const file = req.file as Express.Multer.File;
+
+      if (!file) throw BadRequestError('image is missing');
+
+      const avatar = {
+        id: user.id,
+        file,
+      };
+
+      const response = await this._userService.updateAvatar(avatar);
+      res.status(+response.status).json(response.data);
+    } catch (error) {
+      _next(error);
+    }
+  };
+
+  updateName = async (req: Request, res: Response, _next: NextFunction) => {
+    try {
+      const user = req.gatewayUser!;
+
+      const { tempName } = req.body;
+
+      if (!tempName) throw BadRequestError('name field is missing');
+
+      const newName = {
+        id: user.id,
+        newName: tempName,
+      };
+
+      const response = await this._userService.updateName(newName);
+      res.status(+response.status).json(response.data);
     } catch (error) {
       _next(error);
     }

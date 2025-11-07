@@ -4,6 +4,8 @@ import { ILike } from 'typeorm';
 import { AppDataSource } from '../../config/sql-database';
 import { SqlBaseRepository } from '@Pick2Me/shared';
 import { User } from '../../model/user-schema';
+import { FilterQuery } from 'mongoose';
+import { IUser } from '../../entities/user.interface';
 
 @injectable()
 export class AdminRepository extends SqlBaseRepository<User> implements IAdminRepository {
@@ -20,9 +22,9 @@ export class AdminRepository extends SqlBaseRepository<User> implements IAdminRe
     try {
       const offset = (page - 1) * limit;
 
-      const baseWhere: any = {
+      const baseWhere: FilterQuery<IUser> = {
         account_status: status,
-        is_admin: false,
+        role: 'User',
       };
 
       if (search) {

@@ -7,51 +7,57 @@ import { TYPES } from '../types/container-type';
 export class AdminController {
   constructor(@inject(TYPES.AdminService) private readonly _adminService: IAdminService) {}
 
-  getUsersList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getUserList = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { page = '1', limit = '6', search = '', status } = req.query;
+      const page = Math.max(1, Number(req.query.page) || 1);
+      const limit = Math.min(100, Number(req.query.limit) || 6);
+      const status = req.query.status;
 
-      const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
-      const limitNum = Math.min(50, Math.max(1, parseInt(String(limit), 10) || 6));
+      const search = String(req.query.search || '');
 
-      const result = await this._adminService.getUserWithStatusPaginated(
+      const result = await this._adminService.getUserList(
         status as 'Good' | 'Block',
-        pageNum,
-        limitNum,
+        page,
+        limit,
         String(search).trim()
       );
 
-      const users = result.users || [];
-      const pagination = result.pagination || {};
-
-      res.status(200).json({ users, pagination });
+      res.status(200).json({
+        users: result.users || [],
+        pagination: result.pagination || {
+          currentPage: page,
+          totalPages: 1,
+          totalItems: 0,
+          itemsPerPage: limit,
+        },
+      });
     } catch (err) {
       next(err);
     }
   };
 
-  getBlockedUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { page = '1', limit = '6', search = '' } = req.query;
+  // getBlockedUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     const { page = '1', limit = '6', search = '' } = req.query;
 
-      const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
-      const limitNum = Math.min(50, Math.max(1, parseInt(String(limit), 10) || 6));
+  //     const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
+  //     const limitNum = Math.min(50, Math.max(1, parseInt(String(limit), 10) || 6));
 
-      const result = await this._adminService.getUserWithStatusPaginated(
-        'Block',
-        pageNum,
-        limitNum,
-        String(search).trim()
-      );
+  //     const result = await this._adminService.getUserWithStatusPaginated(
+  //       'Block',
+  //       pageNum,
+  //       limitNum,
+  //       String(search).trim()
+  //     );
 
-      const users = result.users || [];
-      const pagination = result.pagination || {};
+  //     const users = result.users || [];
+  //     const pagination = result.pagination || {};
 
-      res.status(200).json({ users, pagination });
-    } catch (err) {
-      next(err);
-    }
-  };
+  //     res.status(200).json({ users, pagination });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 
   getUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {

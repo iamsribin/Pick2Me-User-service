@@ -54,13 +54,13 @@ export class RegistrationService implements IRegistrationService {
 
       const refreshToken = generateJwtToken(
         payload,
-        process.env.TOKEN_SECRET as string,
+        process.env.REFRESH_TOKEN_SECRET as string,
         '7d'
       );
 
       const accessToken = generateJwtToken(
         payload,
-        process.env.TOKEN_SECRET as string,
+        process.env.ACCESS_TOKEN_SECRET as string,
         '3m'
       );
 
@@ -98,13 +98,13 @@ export class RegistrationService implements IRegistrationService {
 
       const refreshToken = generateJwtToken(
         payload,
-        process.env.TOKEN_SECRET as string,
+        process.env.REFRESH_TOKEN_SECRET as string,
         '7d'
       );
 
       const accessToken = generateJwtToken(
         payload,
-        process.env.TOKEN_SECRET as string,
+        process.env.ACCESS_TOKEN_SECRET as string,
         '3m'
       );
 
@@ -129,10 +129,7 @@ export class RegistrationService implements IRegistrationService {
     try {
       if (!token) throw ForbiddenError('no token provided');
 
-      const payload = verifyToken(
-        token, 
-        process.env.TOKEN_SECRET! as string
-      ) as AccessPayload;
+      const payload = verifyToken(token, process.env.TOKEN_SECRET! as string) as AccessPayload;
 
       if (!payload) throw ForbiddenError('token missing');
 
@@ -148,7 +145,7 @@ export class RegistrationService implements IRegistrationService {
         process.env.TOKEN_SECRET! as string,
         '3m'
       );
-console.log("accessToken",accessToken);
+      console.log('accessToken', accessToken);
 
       return { accessToken };
     } catch (error) {

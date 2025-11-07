@@ -1,22 +1,24 @@
 import { inject, injectable } from 'inversify';
-import { UserProfileDto } from '../../dto/response/user-response.dto';
+import { AvatarData, UserProfileDto } from '../../dto/response/user-response.dto';
 import { IUserRepository } from '../../repositories/interface/i-user-repository';
 import { IUserService } from '../interfaces/i-user-service';
 import { TYPES } from '../../types/container-type';
+import { REGISTRATION_CONSTANTS } from '../../constants/registration-constants';
+import { deleteFromS3, uploadToS3Public } from '../../utils/s3';
 import {
+  BadRequestError,
   HttpError,
   InternalError,
   IResponse,
   StatusCode,
   UnauthorizedError,
 } from '@Pick2Me/shared';
-import { REGISTRATION_CONSTANTS } from '../../constants/registration-constants';
 
 @injectable()
 export class UserService implements IUserService {
   constructor(@inject(TYPES.UserRepository) private _userRepo: IUserRepository) {}
 
-  async fetchUserProfile(id: string): Promise<IResponse<UserProfileDto>> {
+  async fetchProfile(id: string): Promise<IResponse<UserProfileDto>> {
     try {
       const user = await this._userRepo.findById(id);
 
@@ -49,6 +51,46 @@ export class UserService implements IUserService {
     } catch (error) {
       if (error instanceof HttpError) throw error;
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
+    }
+  }
+
+  async updateAvatar(avatarData: AvatarData): Promise<IResponse<null>> {
+    try {
+      const user = await this._userRepo.findById(avatarData.id);
+
+      if (!user) throw BadRequestError('account not fount');
+
+      const avatarUlr = await uploadToS3Public(avatarData.file);
+
+      await this._userRepo.update(avatarData.id, { user_image: avatarUlr });
+
+      if (user.user_image) await deleteFromS3(user.user_image);
+
+      return {
+        status: StatusCode.Created,
+        message: 'successfully updated',
+      };
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpError) throw error;
+      throw InternalError('something went wrong!');
+    }
+  }
+
+  async updateName(nameUpdateData: { newName: string; id: string }): Promise<IResponse<null>> {
+    try {
+      const user = await this._userRepo.update(nameUpdateData.id, { name: nameUpdateData.newName });
+
+      if (!user) throw BadRequestError('account not fount');
+
+      return {
+        status: StatusCode.OK,
+        message: 'successfully updated',
+      };
+    } catch (error) {
+      console.log(error);
+      if (error instanceof HttpError) throw error;
+      throw InternalError('something went wrong!');
     }
   }
 }

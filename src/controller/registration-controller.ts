@@ -65,26 +65,6 @@ export class RegistrationController {
     }
   };
 
-  checkLoginUser = async (req: Request, res: Response, _next: NextFunction) => {
-    try {
-      const { mobile } = req.body;
-      const result = await this._registrationService.authenticateUserByMobile(mobile);
-
-      const { refreshToken, ...responseWithoutToken } = result;
-
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.status(200).json(responseWithoutToken);
-    } catch (error) {
-      _next(error);
-    }
-  };
-
   refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken;
@@ -103,14 +83,51 @@ export class RegistrationController {
       const { email } = req.body;
       const result = await this._registrationService.authenticateUserByGoogle(email);
 
-      const { refreshToken, ...responseWithoutToken } = result;
+      const { refreshToken, token, ...responseWithoutToken } = result;
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, //7 day
       });
+
+      res.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 3 * 60 * 1000, //3 min
+      });
+
+      console.log('set both in cookie goole');
+
+      res.status(200).json(responseWithoutToken);
+    } catch (error) {
+      _next(error);
+    }
+  };
+
+  checkLoginUser = async (req: Request, res: Response, _next: NextFunction) => {
+    try {
+      const { mobile } = req.body;
+      const result = await this._registrationService.authenticateUserByMobile(mobile);
+
+      const { refreshToken, token, ...responseWithoutToken } = result;
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, //7 day
+      });
+
+      res.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 3 * 60 * 1000, //3 min
+      });
+      console.log('set both in cookie mobile');
 
       res.status(200).json(responseWithoutToken);
     } catch (error) {
@@ -123,6 +140,7 @@ export class RegistrationController {
       console.log('logout');
 
       res.clearCookie('refreshToken');
+      res.clearCookie('accessToken');
       res.status(StatusCode.OK).json({ message: 'successfully logged out' });
     } catch (err) {
       console.log('err', err);
