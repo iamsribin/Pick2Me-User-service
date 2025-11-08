@@ -20,14 +20,12 @@ import {
   AccessPayload,
   BadRequestError,
   ConflictError,
-  ForbiddenError,
   generateJwtToken,
   getRedisService,
   HttpError,
   InternalError,
   NotFoundError,
   UnauthorizedError,
-  verifyToken,
 } from '@Pick2Me/shared';
 
 @injectable()
@@ -120,37 +118,6 @@ export class RegistrationService implements IRegistrationService {
         refreshToken: refreshToken,
       };
     } catch (error) {
-      if (error instanceof HttpError) throw error;
-      throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
-    }
-  }
-
-  async refreshToken(token: string): Promise<{ accessToken: string }> {
-    try {
-      if (!token) throw ForbiddenError('no token provided');
-
-      const payload = verifyToken(token, process.env.TOKEN_SECRET! as string) as AccessPayload;
-
-      if (!payload) throw ForbiddenError('token missing');
-
-      const user = await this._userRepo.findById(payload.id);
-
-      if (!user) throw UnauthorizedError('account not found');
-
-      if (user.account_status === 'Block')
-        throw UnauthorizedError('Your account has been blocked!');
-
-      const accessToken = generateJwtToken(
-        { id: payload.id, role: payload.role },
-        process.env.TOKEN_SECRET! as string,
-        '3m'
-      );
-      console.log('accessToken', accessToken);
-
-      return { accessToken };
-    } catch (error) {
-      console.log(error);
-
       if (error instanceof HttpError) throw error;
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
@@ -283,4 +250,35 @@ export class RegistrationService implements IRegistrationService {
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
   }
+
+  // async refreshToken(token: string): Promise<{ accessToken: string }> {
+  //   try {
+  //     if (!token) throw ForbiddenError('no token provided');
+
+  //     const payload = verifyToken(token, process.env.TOKEN_SECRET! as string) as AccessPayload;
+
+  //     if (!payload) throw ForbiddenError('token missing');
+
+  //     const user = await this._userRepo.findById(payload.id);
+
+  //     if (!user) throw UnauthorizedError('account not found');
+
+  //     if (user.account_status === 'Block')
+  //       throw UnauthorizedError('Your account has been blocked!');
+
+  //     const accessToken = generateJwtToken(
+  //       { id: payload.id, role: payload.role },
+  //       process.env.TOKEN_SECRET! as string,
+  //       '3m'
+  //     );
+  //     console.log('accessToken', accessToken);
+
+  //     return { accessToken };
+  //   } catch (error) {
+  //     console.log(error);
+
+  //     if (error instanceof HttpError) throw error;
+  //     throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
+  //   }
+  // }
 }

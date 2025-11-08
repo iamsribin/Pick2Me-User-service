@@ -2,12 +2,12 @@ import { plainToInstance } from 'class-transformer';
 import { IAdminService } from '../interfaces/i-admin-service';
 import { UserDto } from '../../dto/transformer/user.dto';
 import { UserProfileResponseDto } from '../../dto/transformer/user-profile.dto';
-import { IUpdateUserStatusGrpcResponse, UserListDTO } from '../../dto/response/admin-response.dto';
+import { AdminUserListDto } from '../../dto/response/admin-response.dto';
 import { IUserDto } from '../../dto/response/profile.dto';
 import { IAdminRepository } from '../../repositories/interface/i-admin-repository';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../types/container-type';
-import { BadRequestError, HttpError, InternalError } from '@Pick2Me/shared';
+import { InternalError, IResponse, StatusCode } from '@Pick2Me/shared';
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -18,17 +18,7 @@ export class AdminService implements IAdminService {
     page: number = 1,
     limit: number = 6,
     search: string = ''
-  ): Promise<{
-    users: UserDto[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalItems: number;
-      itemsPerPage: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    } | null;
-  }> {
+  ): Promise<AdminUserListDto> {
     try {
       const validatedPage = Math.max(1, page);
       const validatedLimit = Math.min(50, Math.max(1, limit));
@@ -68,27 +58,11 @@ export class AdminService implements IAdminService {
         users: transformedUsers,
         pagination,
       };
-    } catch (error) {
-      // include original error in log for debugging
-      console.error('getUserList error:', error);
-      throw new Error('Paginated user data retrieval failed');
+    } catch {
+      throw InternalError("something went wrong")
     }
   }
 
-  async getUserWithStatus(status: 'Good' | 'Block'): Promise<UserListDTO> {
-    try {
-      const users = await this._adminRepo.findUsersByStatus(status);
-      if (!Array.isArray(users)) throw BadRequestError();
-      const transformedUsers: UserDto[] = plainToInstance(UserDto, users, {
-        excludeExtraneousValues: true,
-      });
-
-      return { Users: transformedUsers };
-    } catch (error) {
-      if (error instanceof HttpError) throw error;
-      throw InternalError('something went wrong');
-    }
-  }
   async getUserDetails(id: string): Promise<IUserDto> {
     try {
       const user = await this._adminRepo.getUserAllDetails(id);
@@ -108,7 +82,7 @@ export class AdminService implements IAdminService {
     id: string,
     status: 'Good' | 'Block',
     reason: string
-  ): Promise<IUpdateUserStatusGrpcResponse> {
+  ): Promise<IResponse<null>> {
     try {
       const user = await this._adminRepo.updateUserStatus(id, status, reason);
 
@@ -116,7 +90,7 @@ export class AdminService implements IAdminService {
         throw new Error('User not found');
       }
 
-      return { message: 'User status updated successfully', user_id: user.id };
+      return { status:StatusCode.OK, message: 'User status updated successfully' };
     } catch {
       throw new Error('User status update');
     }

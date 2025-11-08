@@ -17,5 +17,5 @@ export interface IRegistrationService {
   ): Promise<RegisterResponseDto>;
   authenticateUserByMobile(mobile: string): Promise<LoginResponseDto>;
   authenticateUserByGoogle(email: string): Promise<LoginResponseDto>;
-  refreshToken(token: string): Promise<{ accessToken: string }>;
+  // refreshToken(token: string): Promise<{ accessToken: string }>;
 }

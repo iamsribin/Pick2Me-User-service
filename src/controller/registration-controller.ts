@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { IRegistrationService } from '../services/interfaces/i-registration-service';
-import { ConflictError, ForbiddenError, StatusCode } from '@Pick2Me/shared';
+import { ConflictError, StatusCode } from '@Pick2Me/shared';
 import { uploadToS3Public } from '../utils/s3';
 import { TYPES } from '../types/container-type';
 
@@ -65,19 +65,6 @@ export class RegistrationController {
     }
   };
 
-  refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const refreshToken = req.cookies.refreshToken;
-
-      if (!req.cookies) throw ForbiddenError('token missing');
-
-      const accessToken = await this._registrationService.refreshToken(refreshToken);
-      res.status(200).json(accessToken);
-    } catch (err: unknown) {
-      next(err);
-    }
-  };
-
   checkGoogleLoginUser = async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { email } = req.body;
@@ -135,17 +122,30 @@ export class RegistrationController {
     }
   };
 
-  logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      console.log('logout');
+  //   refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     const refreshToken = req.cookies.refreshToken;
 
-      res.clearCookie('refreshToken');
-      res.clearCookie('accessToken');
-      res.status(StatusCode.OK).json({ message: 'successfully logged out' });
-    } catch (err) {
-      console.log('err', err);
+  //     if (!req.cookies) throw ForbiddenError('token missing');
 
-      next(err);
-    }
-  };
+  //     const accessToken = await this._registrationService.refreshToken(refreshToken);
+  //     res.status(200).json(accessToken);
+  //   } catch (err: unknown) {
+  //     next(err);
+  //   }
+  // };
+
+  // logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  //   try {
+  //     console.log('logout');
+
+  //     res.clearCookie('refreshToken');
+  //     res.clearCookie('accessToken');
+  //     res.status(StatusCode.OK).json({ message: 'successfully logged out' });
+  //   } catch (err) {
+  //     console.log('err', err);
+
+  //     next(err);
+  //   }
+  // };
 }

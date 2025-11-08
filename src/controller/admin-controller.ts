@@ -22,6 +22,8 @@ export class AdminController {
         String(search).trim()
       );
 
+      console.log("result",result);
+      
       res.status(200).json({
         users: result.users || [],
         pagination: result.pagination || {

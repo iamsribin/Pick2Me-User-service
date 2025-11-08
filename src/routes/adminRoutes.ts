@@ -8,6 +8,7 @@ const adminUserController = container.get<AdminController>(TYPES.AdminController
 
 export const adminRoute = express.Router();
 
+//  All routes below require a valid admin gateway JWT
 adminRoute.use(verifyGatewayJwt(true, process.env.GATEWAY_SHARED_SECRET!));
 
 adminRoute.get('/users', catchAsync(adminUserController.getUserList));

@@ -1,15 +1,13 @@
 import { UserDto } from '../transformer/user.dto';
 
-export interface AdminUpdateUserStatusResponse {
-  message: string;
-  user_id: string;
-}
-
-export class UserListDTO {
-  Users: UserDto[] = [];
-}
-
-export interface IUpdateUserStatusGrpcResponse {
-  message: string;
-  user_id: string;
+export interface AdminUserListDto {
+  users: UserDto[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  } | null;
 }

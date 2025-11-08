@@ -69,3 +69,4 @@ export class PaginatedUserListDTO {
   @Expose()
   pagination!: PaginationTransformerDto;
 }
+
