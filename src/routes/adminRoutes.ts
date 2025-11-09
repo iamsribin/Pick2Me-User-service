@@ -12,5 +12,5 @@ export const adminRoute = express.Router();
 adminRoute.use(verifyGatewayJwt(true, process.env.GATEWAY_SHARED_SECRET!));
 
 adminRoute.get('/users', catchAsync(adminUserController.getUserList));
-adminRoute.get('/userData', adminUserController.getUserData);
-adminRoute.patch('/updateUserStatus', adminUserController.updateUserStatus);
+adminRoute.get('/users/:id', adminUserController.getUserData);
+adminRoute.patch('/users/:id', adminUserController.updateUserStatus);

@@ -13,7 +13,7 @@ const userRouter = express.Router();
 userRouter.use(verifyGatewayJwt(true, process.env.GATEWAY_SHARED_SECRET!));
 
 userRouter.post(
-  '/uploadChatFile',
+  'me/upload-chat-file',
   upload.fields([{ name: 'file', maxCount: 1 }]),
   catchAsync(userController.uploadChatFile)
 );

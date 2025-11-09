@@ -113,7 +113,6 @@ export class RegistrationController {
         sameSite: 'strict',
         maxAge: 3 * 60 * 1000, //3 min
       });
-      console.log('set both in cookie mobile');
 
       res.status(200).json(responseWithoutToken);
     } catch (error) {

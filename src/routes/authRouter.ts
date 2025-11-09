@@ -14,10 +14,10 @@ authRouter.post(
   upload.single('userImage'),
   catchAsync(registrationController.register)
 );
-authRouter.post('/checkUser', catchAsync(registrationController.checkUser));
-authRouter.post('/resendOtp', catchAsync(registrationController.resendOtp));
-authRouter.post('/checkLoginUser', catchAsync(registrationController.checkLoginUser));
-authRouter.post('/checkGoogleLoginUser', catchAsync(registrationController.checkGoogleLoginUser));
+authRouter.post('/check-registration', catchAsync(registrationController.checkUser));
+authRouter.post('/resend-otp', catchAsync(registrationController.resendOtp));
+authRouter.post('/check-login-number', catchAsync(registrationController.checkLoginUser));
+authRouter.post('/check-login-email', catchAsync(registrationController.checkGoogleLoginUser));
 // authRouter.get('/refresh', catchAsync(registrationController.refreshToken));
 // authRouter.delete('/logout', catchAsync(registrationController.logout));
 
