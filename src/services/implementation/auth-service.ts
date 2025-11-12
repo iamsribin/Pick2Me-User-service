@@ -26,7 +26,9 @@ import {
   InternalError,
   NotFoundError,
   UnauthorizedError,
+  UserRegisteredEvent,
 } from '@Pick2Me/shared';
+import {UserEventProducer } from '../../event/publisher';
 
 @injectable()
 export class RegistrationService implements IRegistrationService {
@@ -65,6 +67,7 @@ export class RegistrationService implements IRegistrationService {
       if (!accessToken || !refreshToken) {
         throw UnauthorizedError('Failed to generate authentication tokens');
       }
+
       return {
         _id: user.id,
         message: 'Authentication successful',
@@ -73,7 +76,7 @@ export class RegistrationService implements IRegistrationService {
         token: accessToken,
         refreshToken: refreshToken,
       };
-    } catch (error) {
+    } catch (error) {      
       if (error instanceof HttpError) throw error;
       throw InternalError('something went wrong');
     }
@@ -150,6 +153,15 @@ export class RegistrationService implements IRegistrationService {
       };
 
       const savedUser = await this._userRepo.create(newUserData);
+
+      const event: UserRegisteredEvent ={
+        userId: savedUser?.id.toString() as string,
+        email: savedUser?.email.toString() as string,
+        createdAt: new Date().toISOString(),
+      }
+
+      // Publish event to Payment Service
+      await UserEventProducer.publishUserCreatedEvent(event);
 
       if (!savedUser) throw InternalError('Failed to create user');
 
