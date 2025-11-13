@@ -1,6 +1,7 @@
 import { IUser } from '@/entities/user.interface';
+import { ISqlBaseRepository } from '@Pick2Me/shared';
 
-export interface IAdminRepository {
+export interface IAdminRepository extends ISqlBaseRepository<IUser> {
   findUsersByStatusWithPagination(
     status: 'Good' | 'Block',
     page?: number,

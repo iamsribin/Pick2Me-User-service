@@ -13,6 +13,7 @@ import {
   StatusCode,
   UnauthorizedError,
 } from '@Pick2Me/shared';
+import { fetchUserWalletBalanceAndTransactions } from '@/grpc/client/payment-client';
 
 @injectable()
 export class UserService implements IUserService {
@@ -24,6 +25,8 @@ export class UserService implements IUserService {
 
       if (!user) throw UnauthorizedError('Access denied. User not found');
 
+      const walletBalanceAndTransactions = await fetchUserWalletBalanceAndTransactions(user.id);
+
       const data: UserProfileDto = {
         id: user.id,
         name: user.name,
@@ -34,8 +37,8 @@ export class UserService implements IUserService {
         joiningDate: user.joining_date,
         accountStatus: user.account_status,
         wallet: {
-          balance: 0,
-          transactions: 0,
+          balance: walletBalanceAndTransactions.balance,
+          transactions: walletBalanceAndTransactions.transactions,
         },
         rideDetails: {
           completedRides: Number(user.completed_ride_count),
@@ -49,6 +52,8 @@ export class UserService implements IUserService {
         data,
       };
     } catch (error) {
+      console.log(error);
+
       if (error instanceof HttpError) throw error;
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
