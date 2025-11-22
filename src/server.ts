@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import app from '@/app';
+import { createRedisService } from '@Pick2Me/shared/redis';
 import { startGrpcServer } from '@/grpc/server';
 import { connectSQL } from '@/config/sql-database';
 import { isEnvDefined } from '@/utils/envChecker';
-import { createRedisService } from '@Pick2Me/shared/redis';
 
 const startServer = async () => {
   try {

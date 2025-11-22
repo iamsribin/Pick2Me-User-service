@@ -5,7 +5,6 @@ import { userRouter } from '@/routes/userRouter';
 import { errorHandler } from '@Pick2Me/shared/errors';
 import { adminRoute } from '@/routes/adminRoutes';
 
-
 const app = express();
 
 app.use(express.json());

@@ -13,6 +13,7 @@ import {
   UnauthorizedError,
 } from '@Pick2Me/shared/errors';
 import { IResponse, StatusCode } from '@Pick2Me/shared/interfaces';
+import { UserEventProducer } from '@/event/user.producer';
 
 @injectable()
 export class UserService implements IUserService {
@@ -44,6 +45,7 @@ export class UserService implements IUserService {
           cancelledRides: Number(user.cancel_ride_count),
         },
       };
+      await UserEventProducer.addedRewardAmount('58b504b7-4359-432a-8bb0-8ca13e643f2a');
 
       return {
         message: 'success',
