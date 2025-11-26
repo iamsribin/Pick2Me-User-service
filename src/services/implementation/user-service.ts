@@ -10,10 +10,12 @@ import {
   BadRequestError,
   HttpError,
   InternalError,
+  NotFoundError,
   UnauthorizedError,
 } from '@Pick2Me/shared/errors';
-import { IResponse, StatusCode } from '@Pick2Me/shared/interfaces';
+import { Coordinates, IResponse, StatusCode } from '@Pick2Me/shared/interfaces';
 import { UserEventProducer } from '@/event/user.producer';
+import { SavedLocation } from '@/types/place-type';
 
 @injectable()
 export class UserService implements IUserService {
@@ -97,6 +99,46 @@ export class UserService implements IUserService {
       console.log(error);
       if (error instanceof HttpError) throw error;
       throw InternalError('something went wrong!');
+    }
+  }
+
+  async saveNewPlace(
+    name: string,
+    address: string,
+    coordinates: Coordinates,
+    userId: string
+  ): Promise<void> {
+    try {
+      const user = await this._userRepo.findById(userId);
+      if (!user) throw NotFoundError('user not found');
+
+      const existing: SavedLocation[] = Array.isArray(user.saved_locations)
+        ? user.saved_locations
+        : [];
+
+      const newPlace: SavedLocation = { name, address, coordinates };
+
+      existing.push(newPlace);
+
+      await this._userRepo.update(userId, { saved_locations: existing });
+    } catch (error) {
+      console.log(error);
+      
+      if (error instanceof HttpError) throw error;
+      throw InternalError('something went wrong');
+    }
+  }
+
+  async fetchSavedPlaces(id: string): Promise<SavedLocation[]> {
+    try {
+      const user = await this._userRepo.findById(id);
+
+      const places = user?.saved_locations;
+
+      return places ? places : [];
+    } catch (error) {
+      if (error instanceof HttpError) throw error;
+      throw InternalError('something went wrong');
     }
   }
 }

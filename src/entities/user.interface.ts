@@ -1,3 +1,5 @@
+import { SavedLocation } from '@/types/place-type';
+
 export interface IUser {
   id: string;
   name: string;
@@ -13,4 +15,5 @@ export interface IUser {
   wallet_balance?: number;
   cancel_ride_count?: number;
   completed_ride_count?: number;
+  saved_locations: SavedLocation[];
 }

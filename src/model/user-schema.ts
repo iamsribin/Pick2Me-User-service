@@ -1,3 +1,4 @@
+import { SavedLocation } from '@/types/place-type';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity()
@@ -37,4 +38,7 @@ export class User {
 
   @Column({ type: 'bigint', default: 0 })
   completed_ride_count!: number;
+
+  @Column({ type: 'jsonb', nullable: true, default: () => "'[]'" })
+  saved_locations!: SavedLocation[];
 }

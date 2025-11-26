@@ -4,6 +4,7 @@ import { IUserService } from '@/services/interfaces/i-user-service';
 import { TYPES } from '@/types/container-type';
 import { uploadToS3Public } from '@/utils/s3';
 import { BadRequestError, UnauthorizedError } from '@Pick2Me/shared/errors';
+import { StatusCode } from '@Pick2Me/shared/interfaces';
 
 @injectable()
 export class UserController {
@@ -38,6 +39,34 @@ export class UserController {
       console.log(result);
 
       return res.status(+result.status).json(result.data);
+    } catch (error) {
+      _next(error);
+    }
+  };
+
+  fetchSavedPlaces = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.gatewayUser!;
+      console.log(user);
+
+      if (!user) throw UnauthorizedError('Missing authentication token');
+
+      const places = await this._userService.fetchSavedPlaces(user.id);
+
+      res.status(StatusCode.OK).json(places);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  saveNewPlace = async (req: Request, res: Response, _next: NextFunction) => {
+    try {
+      const { name, address, coordinates } = req.body;
+      const user = req.gatewayUser!;
+      if (!name || !address || !coordinates) throw BadRequestError('some fields are missing');
+
+      await this._userService.saveNewPlace(name, address, coordinates, user.id);
+      res.status(StatusCode.OK).json('success');
     } catch (error) {
       _next(error);
     }

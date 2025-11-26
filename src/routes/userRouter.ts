@@ -19,6 +19,9 @@ userRouter.post(
   catchAsync(userController.uploadChatFile)
 );
 userRouter.get('/me', catchAsync(userController.fetchProfile));
+userRouter.get('/me/saved-places', catchAsync(userController.fetchSavedPlaces));
+userRouter.post('/me/add-saved-place', catchAsync(userController.saveNewPlace));
 userRouter.put('/me/avatar', upload.single('avatar'), catchAsync(userController.updateAvatar));
 userRouter.put('/me/name', catchAsync(userController.updateName));
+
 export { userRouter };
