@@ -35,4 +35,3 @@ export const startGrpcServer = () => {
     console.log('startGrpcServer err=', err);
   }
 };
-

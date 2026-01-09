@@ -48,7 +48,7 @@ export class UserService implements IUserService {
           cancelledRides: Number(user.cancel_ride_count),
         },
       };
-      await UserEventProducer.addedRewardAmount('58b504b7-4359-432a-8bb0-8ca13e643f2a');
+      // await UserEventProducer.addedRewardAmount('58b504b7-4359-432a-8bb0-8ca13e643f2a');
 
       return {
         message: 'success',

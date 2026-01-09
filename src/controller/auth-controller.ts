@@ -96,6 +96,8 @@ export class RegistrationController {
   checkLoginUser = async (req: Request, res: Response, _next: NextFunction) => {
     try {
       const { mobile } = req.body;
+      console.log({ mobile });
+
       const result = await this._registrationService.authenticateUserByMobile(mobile);
 
       const { refreshToken, token, ...responseWithoutToken } = result;
@@ -116,6 +118,8 @@ export class RegistrationController {
 
       res.status(200).json(responseWithoutToken);
     } catch (error) {
+      console.log(error);
+
       _next(error);
     }
   };

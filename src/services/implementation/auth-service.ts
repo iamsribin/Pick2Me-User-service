@@ -76,6 +76,7 @@ export class RegistrationService implements IRegistrationService {
         refreshToken: refreshToken,
       };
     } catch (error) {
+      console.log(error);
       if (error instanceof HttpError) throw error;
       throw InternalError('something went wrong');
     }
@@ -266,6 +267,7 @@ export class RegistrationService implements IRegistrationService {
 
       return await this.registerUser(userData);
     } catch (error) {
+      console.log(error);
       if (error instanceof HttpError) throw error;
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
     }
