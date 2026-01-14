@@ -4,7 +4,6 @@ import { AdminController } from '@/controller/admin-controller';
 import { TYPES } from '@/types/container-type';
 import { verifyGatewayJwt } from '@pick2me/shared/auth';
 import { catchAsync } from '@pick2me/shared/utils';
-import { bcryptchek } from '@pick2me/shared/utils';
 
 const adminUserController = container.get<AdminController>(TYPES.AdminController);
 

@@ -8,7 +8,7 @@ import { StatusCode } from '@pick2me/shared/interfaces';
 
 @injectable()
 export class UserController {
-  constructor(@inject(TYPES.UserService) private readonly _userService: IUserService) {}
+  constructor(@inject(TYPES.UserService) private readonly _userService: IUserService) { }
 
   uploadChatFile = async (req: Request, res: Response, _next: NextFunction) => {
     try {
@@ -46,8 +46,8 @@ export class UserController {
 
   fetchSavedPlaces = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('fetchSavedPlaces');
       const user = req.gatewayUser!;
-      console.log(user);
 
       if (!user) throw UnauthorizedError('Missing authentication token');
 
@@ -55,12 +55,16 @@ export class UserController {
 
       res.status(StatusCode.OK).json(places);
     } catch (error) {
+      console.log('iu err', error);
+
       next(error);
     }
   };
 
   saveNewPlace = async (req: Request, res: Response, _next: NextFunction) => {
     try {
+      console.log('saveNewPlace');
+
       const { name, address, coordinates } = req.body;
       const user = req.gatewayUser!;
       if (!name || !address || !coordinates) throw BadRequestError('some fields are missing');
@@ -68,6 +72,8 @@ export class UserController {
       await this._userService.saveNewPlace(name, address, coordinates, user.id);
       res.status(StatusCode.OK).json('success');
     } catch (error) {
+      console.log('ty err', error);
+
       _next(error);
     }
   };

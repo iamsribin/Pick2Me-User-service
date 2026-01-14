@@ -12,8 +12,7 @@ const userRouter = express.Router();
 
 //  All routes below require a valid user gateway JWT
 userRouter.use(verifyGatewayJwt(true, process.env.GATEWAY_SHARED_SECRET!));
-userRouter.use(()=>{  
-});
+
 userRouter.post(
   'me/upload-chat-file',
   upload.fields([{ name: 'file', maxCount: 1 }]),

@@ -14,13 +14,12 @@ import {
   UnauthorizedError,
 } from '@pick2me/shared/errors';
 import { Coordinates, IResponse, StatusCode } from '@pick2me/shared/interfaces';
-import { UserEventProducer } from '@/event/user.producer';
 import { SavedLocation } from '@/types/place-type';
 import { UserInfo } from '@/types/user';
 
 @injectable()
 export class UserService implements IUserService {
-  constructor(@inject(TYPES.UserRepository) private _userRepo: IUserRepository) {}
+  constructor(@inject(TYPES.UserRepository) private _userRepo: IUserRepository) { }
 
   async fetchProfile(id: string): Promise<IResponse<UserProfileDto>> {
     try {
@@ -56,7 +55,7 @@ export class UserService implements IUserService {
         data,
       };
     } catch (error) {
-      console.log(error);
+      console.log('fetch profle error:',error);
 
       if (error instanceof HttpError) throw error;
       throw InternalError(REGISTRATION_CONSTANTS.MESSAGES.INTERNAL_ERROR);
@@ -111,6 +110,7 @@ export class UserService implements IUserService {
   ): Promise<void> {
     try {
       const user = await this._userRepo.findById(userId);
+
       if (!user) throw NotFoundError('user not found');
 
       const existing: SavedLocation[] = Array.isArray(user.saved_locations)

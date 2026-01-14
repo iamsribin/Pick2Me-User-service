@@ -18,9 +18,11 @@ const startServer = async () => {
 
     createRedisService(process.env.REDIS_URL!);
 
-    app.listen(process.env.PORT, () =>
-      console.log(`User service running on port ${process.env.PORT}`)
-    );
+    const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+
+    app.listen(PORT, () => {
+      console.log(`User service running on port ${PORT}`);
+    });
   } catch (err) {
     console.log(err);
   }
